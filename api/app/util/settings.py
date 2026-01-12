@@ -1,5 +1,8 @@
+import os
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from api.app.util import logger
 
 
 class Settings(BaseSettings):
@@ -9,6 +12,18 @@ class Settings(BaseSettings):
     """
     log_level: str
     openai_api: str
+
+    upload_dir: str = "pdf_files"
+    if not os.path.exists(upload_dir):
+        logger.info("Upload dir %s not fount. Creating one." % upload_dir)
+        os.makedirs(upload_dir)
+    
+    pdf_text_output: str = "pdf_text_output"
+    if not os.path.exists(pdf_text_output):
+        logger.info("PDF text output dir %s not fount. Creating one." % pdf_text_output)
+        os.makedirs(pdf_text_output)
+
+    db_path: str = "pdf_ana.db"
 
     model_config = SettingsConfigDict(
         env_file=".env",
