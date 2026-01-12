@@ -1,0 +1,22 @@
+import sqlite3
+
+DB_NAME = "pdf_ana.db"
+
+def init_db():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS pdf_files (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            pdf_name TEXT NOT NULL UNIQUE
+        );
+    """)
+
+    conn.commit()
+    conn.close()
+    print("Database initialized successfully.")
+
+if __name__ == "__main__":
+    init_db()
