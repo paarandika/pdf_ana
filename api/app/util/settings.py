@@ -12,9 +12,6 @@ class Settings(BaseSettings):
     Most values are loaded from the env file
     """
 
-    log_level: str
-    openai_api: str
-
     upload_dir: str = "storage/pdf_files"
     pdf_text_output: str = "storage/pdf_text_output"
 
@@ -23,7 +20,13 @@ class Settings(BaseSettings):
     vector_db_collection: str = "pdf_chunks"
 
     dir_list: List[str] = [upload_dir, pdf_text_output, vector_db_path]
-    
+
+    azure_endpoint: str
+    azure_endpoint: str
+    azure_deployment: str
+    azure_api_version: str
+    azure_api_key: str
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -35,7 +38,6 @@ class Settings(BaseSettings):
             if not os.path.exists(dir):
                 logger.info("Dir: %s not found. Creating it." % dir)
                 os.makedirs(dir)
-
 
 
 settings = Settings()
