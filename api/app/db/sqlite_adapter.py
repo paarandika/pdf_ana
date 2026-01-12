@@ -5,7 +5,7 @@ from api.app.db import logger
 from api.app.util.settings import settings
 
 class SQLiteDBAdapter:
-    def __init__(self, db_path: str = settings.db_path):
+    def __init__(self, db_path: str = settings.sql_db_path):
         self.db_path = db_path
 
     def _get_connection(self):

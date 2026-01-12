@@ -1,1 +1,4 @@
+chromadb==1.4.0
 fastapi[standard]==0.128.0
+openai==2.15.0
+pymupdf4llm==0.2.9

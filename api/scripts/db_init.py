@@ -1,6 +1,6 @@
 import sqlite3
 
-DB_NAME = "pdf_ana.db"
+DB_NAME = "volumes/pdf_ana.db"
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)

@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 
 from api.app.api import logger
 from api.app.util.settings import settings
-from api.app.db.db_adapter import SQLiteDBAdapter as sql_db_adapter
+from api.app.db.sqlite_adapter import SQLiteDBAdapter as sql_db_adapter
 from api.app.util.pdf_extractor import PDFExtractor
 
 pdf_router = APIRouter(prefix="/pdf")
