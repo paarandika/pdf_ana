@@ -6,10 +6,12 @@ from fastapi.responses import JSONResponse
 from api.app.api import logger
 from api.app.util.settings import settings
 from api.app.db.sqlite_adapter import SQLiteDBAdapter as sql_db_adapter
+from api.app.db.chromadb_adapter import ChromaDBAdapter as vector_db_adapter
 from api.app.util.pdf_extractor import PDFExtractor
 
 pdf_router = APIRouter(prefix="/pdf")
 sql_adapter = sql_db_adapter()
+vector_adapter = vector_db_adapter()
 pdf_extractor = PDFExtractor()
 
 
@@ -38,4 +40,5 @@ async def upload_pdf(file: UploadFile = File(...)):
             status_code=400, content={"message": "Empty or invalid PDF"}
         )
     sql_adapter.insert_pdf(file.filename)
+    vector_adapter.insert_pages(pages, file.filename)
     return {"filename": file.filename}

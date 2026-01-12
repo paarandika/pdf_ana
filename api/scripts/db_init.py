@@ -1,6 +1,9 @@
 import sqlite3
+import os
 
 DB_NAME = "volumes/pdf_ana.db"
+if not os.path.exists("volumes"):
+    os.makedirs("volumes")
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)
