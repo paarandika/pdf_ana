@@ -79,3 +79,40 @@ class SQLiteDBAdapter:
             conn.commit()
         finally:
             conn.close()
+
+    def insert_question(
+        self,
+        uuid: str,
+        question: str,
+        answer: str,
+        pdf_name: str,
+    ) -> None:
+        conn = self._get_connection()
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute(
+                "SELECT id FROM pdf_files WHERE pdf_name = ?;",
+                (pdf_name,),
+            )
+            row = cursor.fetchone()
+            if row is None:
+                logger.error("PDF not found: %s", pdf_name)
+                return
+            pdf_id = row[0]
+
+            cursor.execute(
+                """
+                INSERT INTO questions (
+                    uuid,
+                    question,
+                    answer,
+                    pdf_id
+                )
+                VALUES (?, ?, ?, ?);
+                """,
+                (uuid, question, answer, pdf_id),
+            )
+            conn.commit()
+        finally:
+            conn.close()

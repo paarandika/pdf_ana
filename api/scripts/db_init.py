@@ -38,6 +38,21 @@ def init_db():
     """
     )
 
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS questions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            uuid TEXT NOT NULL UNIQUE,
+            question TEXT NOT NULL,
+            answer TEXT NOT NULL,
+            pdf_id INTEGER NOT NULL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (pdf_id)
+                REFERENCES pdf_files (id)
+                ON DELETE CASCADE
+        );
+    """
+    )
+
     conn.commit()
     conn.close()
     print("Database initialized successfully.")
