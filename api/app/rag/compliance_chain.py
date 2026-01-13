@@ -17,6 +17,7 @@ from api.app.db.chromadb_adapter import ChromaDBAdapter as vector_db_adapter
 class ComplianceChain:
 
     def __init__(self, filename: str):
+        self.filename = filename
         self.vector_adapter = vector_db_adapter()
         self.llm = AzureChatOpenAI(
             azure_endpoint=settings.azure_endpoint,
@@ -75,7 +76,7 @@ class ComplianceChain:
         ]
 
         pages = itemgetter("metadata") | RunnableLambda(self._context_retriever)
-        self.chain = (
+        answer_chain = (
             RunnableParallel(
                 {
                     "pages": pages,
@@ -85,17 +86,39 @@ class ComplianceChain:
             | self.prompt
             | self.llm
         )
+        self.chain = RunnableParallel(
+            {
+                "answer": answer_chain,
+                "requirement_name": RunnableLambda(lambda x: x["metadata"]["keywords"]),
+            }
+        )
 
     def _context_retriever(self, data: Dict) -> str:
         filename = data["filename"]
         keywords = data["keywords"]
         page_list = self.vector_adapter.get_pages(filename, keywords, n=5)
-        
-        logger.info("Number of pages for file %s: %d" % filename, len(page_list))
-        logger.debug("Chunk ids: %s" % " ,".join([page["id"] for page in page_list]))
+
+        logger.info("Number of pages for file %s: %d" , filename, len(page_list))
+        logger.debug("Chunk ids: %s", " ,".join([page["id"] for page in page_list]))
         logger.debug(
-            "Chunk distances: %s" % " ,".join([page["id"] for page in page_list])
+            "Chunk distances: %s", " ,".join([page["id"] for page in page_list])
         )
-        
+
         out = [page["text"] for page in page_list]
         return "\n\n".join(out)
+
+    async def invoke(self) -> List[ComplianceResponse]:
+        llm_responses = await self.chain.abatch(self.comp_requirements)
+        out = []
+        for response in llm_responses:
+            out.append(
+                ComplianceResponse(
+                    pdf_name=self.filename,
+                    compliance_requirement=response["requirement_name"],
+                    compliance_state=response["answer"].compliance_state,
+                    confidence=response["answer"].confidence,
+                    relevant_quotes=response["answer"].relevant_quotes,
+                    rationale=response["answer"].rationale,
+                )
+            )
+        return out

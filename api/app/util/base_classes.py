@@ -26,6 +26,7 @@ class ComplianceAnswer(BaseModel):
 
 
 class ComplianceResponse(BaseModel):
+    pdf_name: str
     compliance_requirement: str
     compliance_state: ComplianceStateEnum
     confidence: Annotated[int, Field(ge=0, le=100)]
