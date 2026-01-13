@@ -23,7 +23,6 @@ class ChromaDBAdapter:
 
     def insert_pages(self, pages: List[str], filename: str) -> None:
         ids = [str(uuid.uuid4()) for _ in pages]
-        print(ids)
         metadatas = [
             {"page": page["metadata"]["page"], "filename": filename} for page in pages
         ]
@@ -34,7 +33,9 @@ class ChromaDBAdapter:
             metadatas=metadatas,
         )
 
-    def get_pages(self, filename, query, n=2, threshold=10) -> List[Dict]:
+    def get_pages(
+        self, filename: str, query: str, n: int = 2, threshold: float = 10
+    ) -> List[Dict]:
         result = self.collection.query(
             query_texts=[query], n_results=n, where={"filename": filename}
         )
@@ -46,7 +47,7 @@ class ChromaDBAdapter:
                         "id": id,
                         "text": result["documents"][0][i],
                         "page": result["metadatas"][0][i]["page"],
-                        "distance": result["distances"][0][i]
+                        "distance": result["distances"][0][i],
                     }
                 )
         return out

@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     def model_post_init(self, __context: Any) -> None:
         for dir in self.dir_list:
             if not os.path.exists(dir):
-                logger.info("Dir: %s not found. Creating it." % dir)
+                logger.info("Dir: %s not found. Creating it.",dir)
                 os.makedirs(dir)
 
 

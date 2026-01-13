@@ -25,7 +25,7 @@ class PDFExtractor:
                 ignore_images=True,
             )
         except Exception as e:
-            logger.error("Exception while extracting: %s" % document_path)
+            logger.error("Exception while extracting: %s", document_path)
             return [], text_dir
 
         for i, page in enumerate(md_text):
@@ -37,7 +37,7 @@ class PDFExtractor:
         _, file_name = os.path.split(document)
         doc_output = os.path.join(self.ouput_folder, file_name)
         if os.path.exists(doc_output):
-            logger.info("Document folder %s exists" % doc_output)
+            logger.info("Document folder %s exists", doc_output)
             return None
         os.mkdir(doc_output)
         return doc_output
